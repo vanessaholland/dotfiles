@@ -1,0 +1,76 @@
+name: Generate Changelog
+
+on:
+  pull_request_target:
+    types:
+      - opened
+    branches:
+      - main
+
+jobs:
+  generate-change-log:
+    if: startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Generate Changelog
+          id: release-changes
+          run: |
+            current_branch=${{ github.event.pull_request.head.ref }}
+            git fetch origin
+            git checkout $current_branch
+            # For each change get the commit message and extract the type of change
+            feature_commits=$(git log --pretty=format:"%s" origin/main..$current_branch | grep -i "feature" | sed 's/^/* /')
+            echo "$feature_commits"
+            bug_fix_commits=$(git log --pretty=format:"%s" origin/main..$current_branch | grep -i "bugfix" | sed 's/^/* /')
+            echo "$bug_fix_commits"
+            hot_fix_commits=$(git log --pretty=format:"%s" origin/main..$current_branch | grep -i "hotfix" | sed 's/^/* /')
+            echo "$hot_fix_commits"
+            house_keeping_commits=$(git log --pretty=format:"%s" origin/main..$current_branch | grep -i "chore" | sed 's/^/* /')
+            echo "$house_keeping_commits"
+            other_commits=$(git log --pretty=format:"%s" origin/main..$current_branch | grep -v -i "feature" | grep -v -i "bugfix" | grep -v -i "hotfix" | grep -v -i "chore" | sed 's/^/* /')
+            echo "$other_commits"
+
+            # Save the release changes to a file
+            echo "### New Features 🎉" > CHANGELOG.txt
+            echo "$feature_commits" >> CHANGELOG.txt
+            echo "### Bugfixes 🐛" >> CHANGELOG.txt
+            echo "$bug_fix_commits" >> CHANGELOG.txt
+            echo "### Hotfixes 🔥" >> CHANGELOG.txt
+            echo "$hot_fix_commits" >> CHANGELOG.txt
+            echo "### Housekeeping 🧹" >> CHANGELOG.txt
+            echo "$house_keeping_commits" >> CHANGELOG.txt
+            echo "### Other Changes" >> CHANGELOG.txt
+            echo "$other_commits" >> CHANGELOG.txt
+
+
+        - name: Comment Release Changes
+          uses: actions/github-script@v6
+          with:
+            script: |
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '# Changes Included:\n\n' + require('fs').readFileSync('CHANGELOG.txt', 'utf8')
+              })
+
+        - name: Remind to Merge Commit
+          uses: actions/github-script@v6
+          with:
+            script: |
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: 'Please remember to **Merge** the release branch into main.'
+              })
+
+        - name: Commit Release Changes
+          run: |
+            cat CHANGELOG.txt >> CHANGELOG.md
+            git add CHANGELOG.md
+            git commit -m "Add release notes"
+            git push origin $current_branch
