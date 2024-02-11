@@ -1,0 +1,20 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: New Features 🎉
+      labels:
+        - feature
+    - title: Bug Fixes 🐛
+      labels:
+        - bug
+    - title: Hotfixes 🔥
+      labels:
+        - hotfix
+    - title: Housekeeping 🧹
+      labels:
+        - chore
+    - title: Other Changes
+      labels:
+        - "*"
