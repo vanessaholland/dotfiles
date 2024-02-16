@@ -22,3 +22,14 @@
 ### Other Changes
 * Merge branch 'main' into release/version/v1.0.0/testing-releases
 * updating readme (#6)
+### New Features 🎉
+
+### Bugfixes 🐛
+
+### Hotfixes 🔥
+
+### Housekeeping 🧹
+
+### Other Changes
+* test: changes to context dump (#10)
+* Merging main to staging
