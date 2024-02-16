@@ -13,3 +13,7 @@ bug:
 # Add 'hotfix' label to any PR where the head branch name starts with `hotfix` or has a `hotfix` section in the name
 hotfix:
  - head-branch: ['^hotfix', 'hotfix']
+
+ # Add 'release' label to any PR where the head branch name starts with `release`
+release:
+ - head-branch: ['^release']
