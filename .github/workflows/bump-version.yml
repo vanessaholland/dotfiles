@@ -7,7 +7,7 @@ on:
 
 jobs:
     create-release:
-        if: startsWith(github.event.base_ref, 'release/version/')
+        if: contains(github.event.base_ref, 'release/version/')
         runs-on: ubuntu-latest
         outputs:
             tag-name: ${{ steps.prepare-tag.outputs.tag-name }}
