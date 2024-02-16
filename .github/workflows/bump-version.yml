@@ -7,7 +7,7 @@ on:
 
 jobs:
     create-release:
-        if: contains(github.event.head_commit.message, 'release/version/')
+        if: contains(github.event.base_ref, 'release/version/')
         runs-on: ubuntu-latest
         outputs:
             tag-name: ${{ steps.prepare-tag.outputs.tag-name }}
@@ -15,8 +15,8 @@ jobs:
         - name: Parse release tag
           id: prepare-tag
           run: |
-                commit_message="${{ github.event.head_commit.message }}"
-                tag_name=$(echo $commit_message | sed 's/version\///')
+                branch_name="${{ github.event.base_ref }}"
+                tag_name=$(echo $branch_name | sed 's/version\///')
                 echo "tag-name=$tag_name" >> $GITHUB_OUTPUT
 
         - name: Checkout branch
