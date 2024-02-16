@@ -1,9 +1,10 @@
 name: Generate Changelog
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
+      - synchronize
     branches:
       - main
 
@@ -77,4 +78,4 @@ jobs:
             cat CHANGELOG.txt >> CHANGELOG.md
             git add CHANGELOG.md
             git commit -m "Add release notes"
-            git push origin $current_branch
+            git push origin $current_branch --force
