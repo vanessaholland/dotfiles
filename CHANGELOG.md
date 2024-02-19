@@ -5,6 +5,7 @@
 ### Hotfixes 🔥
 
 ### Housekeeping 🧹
-* Chore/dialing in tag creation (#12)
+
 ### Other Changes
+* using grep to grab version number (#14)
 * Merging main to staging
