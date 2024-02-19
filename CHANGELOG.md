@@ -5,6 +5,6 @@
 ### Hotfixes 🔥
 
 ### Housekeeping 🧹
-* chore/hopefully this does it (#20)
+* chore/dealing with multi-line output (#22)
 ### Other Changes
 * Merging main to staging
