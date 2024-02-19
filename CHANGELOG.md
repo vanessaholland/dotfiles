@@ -5,7 +5,6 @@
 ### Hotfixes 🔥
 
 ### Housekeeping 🧹
-
+* chore/this is so annoying (#16)
 ### Other Changes
-* using grep to grab version number (#14)
 * Merging main to staging
