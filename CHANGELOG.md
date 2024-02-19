@@ -5,6 +5,6 @@
 ### Hotfixes 🔥
 
 ### Housekeeping 🧹
-* chore/this is so annoying (#16)
+* chore/removing deprecation warnings (#18)
 ### Other Changes
 * Merging main to staging
