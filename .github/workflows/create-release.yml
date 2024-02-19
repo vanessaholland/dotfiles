@@ -17,7 +17,7 @@ jobs:
               id: get_changelog
               run: |
                     cat CHANGELOG.md > changelog.txt
-                    echo "changelog=$(cat changelog.txt)" >> $GITHUB_OUTPUT
+                    echo "changelog=$(cat changelog.txt)" >> "$GITHUB_OUTPUT"
 
             - name: Create Release
               id: create_release
