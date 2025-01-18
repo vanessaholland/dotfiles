@@ -1,56 +1,91 @@
 #
-# Executes commands at login pre-zshrc.
+# Defines environment variables.
 #
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
-#if [[ -s "/opt/boxen/env.sh" ]]; then
-  #source "/opt/boxen/env.sh"
-#fi
+#
+# Browser
+#
 
-#if [[ -s "/opt/rbenv" ]]; then
-  #export RBENV_ROOT=/opt/rbenv
-  #export PATH=$RBENV_ROOT/bin:/opt/rbenv/bin/rbenv:$PATH
-  #eval "$(rbenv init -)"
-#fi
-
-if [[ -s "${ZDOTDIR:-$HOME}/.tmuxinator/scripts/tmuxinator" ]]; then
-  source "${ZDOTDIR:-$HOME}/.tmuxinator/scripts/tmuxinator"
+if [[ "$OSTYPE" == darwin* ]]; then
+  export BROWSER='open'
 fi
 
-if [[ -s "${ZDOTDIR:-$HOME}/.aliasrc" ]]; then
-  source "${ZDOTDIR:-$HOME}/.aliasrc"
+#
+# Editors
+#
+
+export EDITOR='vim'
+export VISUAL='vim'
+export PAGER='less'
+
+#
+# Language
+#
+
+if [[ -z "$LANG" ]]; then
+  export LANG='en_US.UTF-8'
 fi
 
-if [[ -s "${ZDOTDIR:-$HOME}/.environmentrc" ]]; then
-  source "${ZDOTDIR:-$HOME}/.environmentrc"
+#
+# Paths
+#
+
+typeset -gU cdpath fpath mailpath path
+
+# Set the the list of directories that cd searches.
+# cdpath=(
+#   $cdpath
+# )
+
+# Set the list of directories that Zsh searches for programs.
+path=(
+  /usr/local/{bin,sbin}
+  $path
+)
+
+#
+# Less
+#
+
+# Set the default Less options.
+# Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+# Remove -X and -F (exit if the content fits on one screen) to enable it.
+export LESS='-F -g -i -M -R -S -w -X -z-4'
+
+# Set the Less input preprocessor.
+if (( $+commands[lesspipe.sh] )); then
+  export LESSOPEN='| /usr/bin/env lesspipe.sh %s 2>&-'
 fi
 
-if [[ -s "$HOME/Library/Android" ]]; then
-  export PATH=$HOME/Library/Android/sdk/platform-tools:$PATH
-  export PATH=$HOME/Library/Android/sdk/tools/proguard/bin:$PATH
+#
+# Temporary Files
+#
+
+if [[ -d "$TMPDIR" ]]; then
+  export TMPPREFIX="${TMPDIR%/}/zsh"
+  if [[ ! -d "$TMPPREFIX" ]]; then
+    mkdir -p "$TMPPREFIX"
+  fi
 fi
 
-if [[ -s "$HOME/.rbenv" ]]; then
-  export PATH="$HOME/.rbenv/bin:$PATH"
-  eval "$(rbenv init - --no-rehash)"
+#
+# Add a local themes directory
+#
+fpath=($fpath ${ZDOTDIR:-$HOME}/.zsh-themes)
+
+#
+# Configure BrewCask
+#
+# export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+
+
+# Ensure that a non-login, non-interactive shell has a defined environment.
+if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 
-if [[ -s "$HOME/.nodenv" ]]; then
-  export PATH="$HOME/.nodenv/bin:$PATH"
-  eval "$(nodenv init -)"
-fi
-
-if [[ -s "$HOME/.bin" ]]; then
-  export PATH="$HOME/.bin:$PATH"
-fi
-
-# Setting PATH for Python 3.10
-# The original version is saved in .zprofile.pysave
-PATH="/Library/Frameworks/Python.framework/Versions/3.10/bin:${PATH}"
-export PATH
-# Add Visual Studio Code (code)
-export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-
-code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
